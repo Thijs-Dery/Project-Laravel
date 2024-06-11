@@ -41,3 +41,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 });
+
+Route::resource('news', NewsController::class);
+
+Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+
+Route::resource('faq', FAQController::class);
+Route::resource('faq-categories', FAQCategoryController::class);
