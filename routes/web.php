@@ -7,7 +7,6 @@ use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ContactFormController;
 
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -20,13 +19,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 });
 
 require __DIR__.'/auth.php';
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes();
 
@@ -41,43 +37,19 @@ Route::get('/test-db', function () {
     }
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
-});
-
 Route::resource('news', NewsController::class);
-
-Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::resource('faq', FAQController::class);
 Route::resource('faq-categories', FAQCategoryController::class);
-Route::resource('news', NewsController::class);
+
 Route::resource('contact-forms', ContactFormController::class)->only(['create', 'store']);
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('news', NewsController::class)->except(['index', 'show']);
+    Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
 });
 
 Route::resource('news', NewsController::class)->only(['index', 'show']);
-Route::resource('news', NewsController::class);
-
-Route::resource('faq_categories', FaqCategoryController::class);
-Route::resource('faqs', FaqController::class);
 
 Route::get('/contact', [ContactFormController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
-
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
-});
-
-
-
-Route::get('/contact', [ContactFormController::class, 'create'])->name('contact.create');
-Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
-
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
-});

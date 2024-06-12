@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class NewsController extends Controller
 {
@@ -24,61 +23,53 @@ class NewsController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'cover_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'cover_image' => 'nullable|image',
+            'published_at' => 'nullable|date',
         ]);
 
-        $news = new News();
-        $news->title = $request->input('title');
-        $news->content = $request->input('content');
-        $news->user_id = Auth::id();
+        $news = new News($request->all());
+
         if ($request->hasFile('cover_image')) {
-            $imageName = time().'.'.$request->cover_image->extension();  
-            $request->cover_image->move(public_path('images'), $imageName);
-            $news->cover_image = $imageName;
+            $news->cover_image = $request->file('cover_image')->store('news');
         }
-        $news->published_at = now();
+
         $news->save();
 
         return redirect()->route('news.index')->with('success', 'News created successfully.');
     }
 
-    public function show($id)
+    public function show(News $news)
     {
-        $news = News::findOrFail($id);
         return view('news.show', compact('news'));
     }
 
-    public function edit($id)
+    public function edit(News $news)
     {
-        $news = News::findOrFail($id);
         return view('news.edit', compact('news'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, News $news)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'cover_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'cover_image' => 'nullable|image',
+            'published_at' => 'nullable|date',
         ]);
 
-        $news = News::findOrFail($id);
-        $news->title = $request->input('title');
-        $news->content = $request->input('content');
+        $news->fill($request->all());
+
         if ($request->hasFile('cover_image')) {
-            $imageName = time().'.'.$request->cover_image->extension();  
-            $request->cover_image->move(public_path('images'), $imageName);
-            $news->cover_image = $imageName;
+            $news->cover_image = $request->file('cover_image')->store('news');
         }
-        $news->published_at = now();
+
         $news->save();
 
         return redirect()->route('news.index')->with('success', 'News updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(News $news)
     {
-        $news = News::findOrFail($id);
         $news->delete();
         return redirect()->route('news.index')->with('success', 'News deleted successfully.');
     }

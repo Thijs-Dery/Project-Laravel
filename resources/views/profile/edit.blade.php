@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1>Edit Profile</h1>
-    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('profile.update', $user->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
         <div class="form-group">
@@ -39,5 +39,3 @@
     </form>
 </div>
 @endsection
-
-
