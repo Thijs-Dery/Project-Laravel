@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NewsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,3 +57,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::resource('news', NewsController::class)->only(['index', 'show']);
+Route::resource('news', NewsController::class);
