@@ -3,43 +3,61 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
     public function edit()
     {
-        $profile = Auth::user()->profile;
-        return view('profile.edit', compact('profile'));
+        $user = Auth::user();
+        return view('profile.edit', ['user' => $user, 'profile' => $user->profile]);
     }
 
     public function update(Request $request)
     {
+        $user = Auth::user();
+        $profile = $user->profile;
+
         $request->validate([
-            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'birthday' => 'date',
-            'bio' => 'string|max:1000',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'birthday' => 'required|date',
+            'bio' => 'nullable|string',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $profile = Auth::user()->profile;
-        if ($request->hasFile('avatar')) {
-            $avatarName = time().'.'.$request->avatar->extension();  
-            $request->avatar->move(public_path('avatars'), $avatarName);
-            $profile->avatar = $avatarName;
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->save();
+
+        if (!$profile) {
+            $profile = new Profile();
+            $profile->user_id = $user->id;
         }
+
         $profile->birthday = $request->input('birthday');
         $profile->bio = $request->input('bio');
+        if ($request->hasFile('avatar')) {
+            $imageName = time().'.'.$request->avatar->extension();
+            $request->avatar->move(public_path('avatars'), $imageName);
+            $profile->avatar = $imageName;
+        }
         $profile->save();
 
-        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully');
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->input('password'));
+            $user->save();
+        }
+
+        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
     }
 
-    public function show($userId)
+    public function show(User $user)
     {
-        $profile = Profile::where('user_id', $userId)->firstOrFail();
-        return view('profile.show', compact('profile'));
+        return view('profile.show', compact('user'));
     }
 }
-
-

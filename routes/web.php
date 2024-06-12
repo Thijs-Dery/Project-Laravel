@@ -48,3 +48,11 @@ Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile
 
 Route::resource('faq', FAQController::class);
 Route::resource('faq-categories', FAQCategoryController::class);
+Route::resource('news', NewsController::class);
+Route::resource('contact-forms', ContactFormController::class)->only(['create', 'store']);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('news', NewsController::class)->except(['index', 'show']);
+});
+
+Route::resource('news', NewsController::class)->only(['index', 'show']);
