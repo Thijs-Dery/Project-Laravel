@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ContactFormController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -63,3 +65,19 @@ Route::resource('news', NewsController::class);
 
 Route::resource('faq_categories', FaqCategoryController::class);
 Route::resource('faqs', FaqController::class);
+
+Route::get('/contact', [ContactFormController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
+});
+
+
+
+Route::get('/contact', [ContactFormController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
+});
