@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\FaqCategoryController;
+use App\Http\Controllers\FaqController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,3 +60,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::resource('news', NewsController::class)->only(['index', 'show']);
 Route::resource('news', NewsController::class);
+
+Route::resource('faq_categories', FaqCategoryController::class);
+Route::resource('faqs', FaqController::class);

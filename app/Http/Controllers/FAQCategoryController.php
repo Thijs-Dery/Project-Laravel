@@ -2,56 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FAQCategory;
+use App\Models\FaqCategory;
 use Illuminate\Http\Request;
 
-class FAQCategoryController extends Controller
+class FaqCategoryController extends Controller
 {
     public function index()
     {
-        $categories = FAQCategory::all();
-        return view('faq-categories.index', compact('categories'));
+        $categories = FaqCategory::all();
+        return view('faq_categories.index', compact('categories'));
     }
 
     public function create()
     {
-        return view('faq-categories.create');
+        return view('faq_categories.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $request->validate(['name' => 'required|string|max:255']);
 
-        FAQCategory::create($request->all());
-        return redirect()->route('faq-categories.index')->with('success', 'Category created successfully.');
+        FaqCategory::create($request->all());
+
+        return redirect()->route('faq_categories.index')->with('success', 'Category created successfully.');
     }
 
-    public function show(FAQCategory $category)
+    public function edit(FaqCategory $faqCategory)
     {
-        return view('faq-categories.show', compact('category'));
+        return view('faq_categories.edit', compact('faqCategory'));
     }
 
-    public function edit(FAQCategory $category)
+    public function update(Request $request, FaqCategory $faqCategory)
     {
-        return view('faq-categories.edit', compact('category'));
+        $request->validate(['name' => 'required|string|max:255']);
+
+        $faqCategory->update($request->all());
+
+        return redirect()->route('faq_categories.index')->with('success', 'Category updated successfully.');
     }
 
-    public function update(Request $request, FAQCategory $category)
+    public function destroy(FaqCategory $faqCategory)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $faqCategory->delete();
 
-        $category->update($request->all());
-        return redirect()->route('faq-categories.index')->with('success', 'Category updated successfully.');
-    }
-
-    public function destroy(FAQCategory $category)
-    {
-        $category->delete();
-        return redirect()->route('faq-categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()->route('faq_categories.index')->with('success', 'Category deleted successfully.');
     }
 }
 

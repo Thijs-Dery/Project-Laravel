@@ -2,59 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FAQ;
+use App\Models\Faq;
+use App\Models\FaqCategory;
 use Illuminate\Http\Request;
 
-class FAQController extends Controller
+class FaqController extends Controller
 {
     public function index()
     {
-        $faqs = FAQ::all();
-        return view('faq.index', compact('faqs'));
+        $faqs = Faq::all();
+        return view('faqs.index', compact('faqs'));
     }
 
     public function create()
     {
-        return view('faq.create');
+        $categories = FaqCategory::all();
+        return view('faqs.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'faq_category_id' => 'required|exists:faq_categories,id',
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'category_id' => 'required|exists:f_a_q_categories,id'
         ]);
 
-        FAQ::create($request->all());
-        return redirect()->route('faq.index')->with('success', 'FAQ created successfully.');
+        Faq::create($request->all());
+
+        return redirect()->route('faqs.index')->with('success', 'FAQ created successfully.');
     }
 
-    public function show(FAQ $faq)
+    public function edit(Faq $faq)
     {
-        return view('faq.show', compact('faq'));
+        $categories = FaqCategory::all();
+        return view('faqs.edit', compact('faq', 'categories'));
     }
 
-    public function edit(FAQ $faq)
-    {
-        return view('faq.edit', compact('faq'));
-    }
-
-    public function update(Request $request, FAQ $faq)
+    public function update(Request $request, Faq $faq)
     {
         $request->validate([
+            'faq_category_id' => 'required|exists:faq_categories,id',
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'category_id' => 'required|exists:f_a_q_categories,id'
         ]);
 
         $faq->update($request->all());
-        return redirect()->route('faq.index')->with('success', 'FAQ updated successfully.');
+
+        return redirect()->route('faqs.index')->with('success', 'FAQ updated successfully.');
     }
 
-    public function destroy(FAQ $faq)
+    public function destroy(Faq $faq)
     {
         $faq->delete();
-        return redirect()->route('faq.index')->with('success', 'FAQ deleted successfully.');
+
+        return redirect()->route('faqs.index')->with('success', 'FAQ deleted successfully.');
     }
 }
