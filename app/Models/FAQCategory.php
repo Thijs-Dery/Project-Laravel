@@ -17,3 +17,4 @@ class FaqCategory extends Model
     }
 }
 
+

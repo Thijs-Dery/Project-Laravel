@@ -4,6 +4,7 @@
 <div class="container">
     <h1>{{ $faq->question }}</h1>
     <p>{{ $faq->answer }}</p>
-    <p>Category: {{ $faq->category->name }}</p>
+    <p><strong>Category:</strong> {{ $faq->category->name }}</p>
+    <a href="{{ route('faqs.index') }}" class="btn btn-secondary">Back to FAQs</a>
 </div>
 @endsection

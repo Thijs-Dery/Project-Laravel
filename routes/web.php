@@ -1,19 +1,23 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ContactFormController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::redirect('/', '/dashboard');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('faq-categories', FaqCategoryController::class);
+    Route::resource('faqs', FaqController::class);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -39,9 +43,6 @@ Route::get('/test-db', function () {
 
 Route::resource('news', NewsController::class);
 
-Route::resource('faq', FAQController::class);
-Route::resource('faq-categories', FAQCategoryController::class);
-
 Route::resource('contact-forms', ContactFormController::class)->only(['create', 'store']);
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -50,6 +51,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::resource('news', NewsController::class)->only(['index', 'show']);
-
-Route::get('/contact', [ContactFormController::class, 'create'])->name('contact.create');
-Route::post('/contact', [ContactFormController::class, 'store'])->name('contact.store');
+Route::resource('faq-categories', FaqCategoryController::class);
+Route::resource('faqs', FaqController::class);
+Route::get('faq/create', [FaqController::class, 'create'])->name('faqs.create');
+Route::post('faq', [FaqController::class, 'store'])->name('faqs.store');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');

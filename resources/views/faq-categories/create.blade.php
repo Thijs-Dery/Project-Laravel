@@ -2,14 +2,14 @@
 
 @section('content')
 <div class="container">
-    <h1>Create FAQ Category</h1>
-    <form action="{{ route('faq_categories.store') }}" method="POST">
+    <h1>Create Category</h1>
+    <form action="{{ route('faq-categories.store') }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="name">Category Name:</label>
             <input type="text" name="name" id="name" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary">Create Category</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </div>
 @endsection
