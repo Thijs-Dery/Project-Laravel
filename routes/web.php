@@ -7,7 +7,6 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ContactFormController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::redirect('/', '/dashboard');
 
 Route::get('/dashboard', function () {
@@ -56,3 +55,7 @@ Route::resource('faqs', FaqController::class);
 Route::get('faq/create', [FaqController::class, 'create'])->name('faqs.create');
 Route::post('faq', [FaqController::class, 'store'])->name('faqs.store');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('news', NewsController::class);
+});

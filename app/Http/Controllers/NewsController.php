@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
 use Illuminate\Http\Request;
+use App\Models\News;
 
 class NewsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $news = News::all();
@@ -21,19 +26,12 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'cover_image' => 'nullable|image',
-            'published_at' => 'nullable|date',
+            'title' => 'required',
+            'content' => 'required',
+            'published_at' => 'required|date',
         ]);
 
-        $news = new News($request->all());
-
-        if ($request->hasFile('cover_image')) {
-            $news->cover_image = $request->file('cover_image')->store('news');
-        }
-
-        $news->save();
+        News::create($request->all());
 
         return redirect()->route('news.index')->with('success', 'News created successfully.');
     }
@@ -51,19 +49,12 @@ class NewsController extends Controller
     public function update(Request $request, News $news)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'cover_image' => 'nullable|image',
-            'published_at' => 'nullable|date',
+            'title' => 'required',
+            'content' => 'required',
+            'published_at' => 'required|date',
         ]);
 
-        $news->fill($request->all());
-
-        if ($request->hasFile('cover_image')) {
-            $news->cover_image = $request->file('cover_image')->store('news');
-        }
-
-        $news->save();
+        $news->update($request->all());
 
         return redirect()->route('news.index')->with('success', 'News updated successfully.');
     }
@@ -71,6 +62,7 @@ class NewsController extends Controller
     public function destroy(News $news)
     {
         $news->delete();
+
         return redirect()->route('news.index')->with('success', 'News deleted successfully.');
     }
 }
