@@ -23,14 +23,19 @@ class FaqController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'faq_category_id' => 'required|exists:faq_categories,id',
-            'question' => 'required|string|max:255',
-            'answer' => 'required|string',
+            'question' => 'required',
+            'answer' => 'required',
+            'category_id' => 'nullable|exists:faq_categories,id'
         ]);
 
-        Faq::create($request->all());
+        Faq::create([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'category_id' => $request->category_id
+        ]);
 
-        return redirect()->route('faqs.index')->with('success', 'FAQ created successfully.');
+        return redirect()->route('faqs.index')
+                        ->with('success', 'FAQ created successfully.');
     }
 
     public function edit(Faq $faq)
@@ -42,22 +47,34 @@ class FaqController extends Controller
     public function update(Request $request, Faq $faq)
     {
         $request->validate([
-            'faq_category_id' => 'required|exists:faq_categories,id',
-            'question' => 'required|string|max:255',
-            'answer' => 'required|string',
+            'question' => 'required',
+            'answer' => 'required',
+            'category_id' => 'nullable|exists:faq_categories,id'
         ]);
 
-        $faq->update($request->all());
+        $faq->update([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'category_id' => $request->category_id
+        ]);
 
-        return redirect()->route('faqs.index')->with('success', 'FAQ updated successfully.');
+        return redirect()->route('faqs.index')
+                        ->with('success', 'FAQ updated successfully.');
     }
 
     public function destroy(Faq $faq)
     {
         $faq->delete();
 
-        return redirect()->route('faqs.index')->with('success', 'FAQ deleted successfully.');
+        return redirect()->route('faqs.index')
+                        ->with('success', 'FAQ deleted successfully.');
     }
 }
+
+
+
+
+
+
 
 

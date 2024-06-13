@@ -9,12 +9,17 @@ class Faq extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['faq_category_id', 'question', 'answer'];
+    protected $fillable = [
+        'question', 'answer', 'category_id'
+    ];
 
     public function category()
     {
-        return $this->belongsTo(FaqCategory::class, 'faq_category_id');
+        return $this->belongsTo(FaqCategory::class, 'category_id');
     }
 }
+
+
+
 
 
