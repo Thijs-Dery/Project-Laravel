@@ -36,6 +36,9 @@
             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Update Profile</button>
+        <a href="{{ route('profile.show', $user->id) }}" class="btn btn-secondary">Go Back</a>
     </form>
 </div>
 @endsection
+
+

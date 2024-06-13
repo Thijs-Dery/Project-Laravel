@@ -22,7 +22,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $profile = $user->profile ?? new Profile(['user_id' => $user->id]);
-
+    
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
@@ -31,31 +31,30 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
-
+    
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->save();
-
-        if (!$profile->exists) {
-            $profile->user_id = $user->id;
-        }
-
+    
         $profile->birthday = $request->input('birthday');
         $profile->bio = $request->input('bio');
+    
         if ($request->hasFile('avatar')) {
             $imageName = time().'.'.$request->avatar->getClientOriginalExtension();
             $request->avatar->move(public_path('avatars'), $imageName);
             $profile->avatar = $imageName;
         }
+    
         $profile->save();
-
+    
         if ($request->filled('password')) {
             $user->password = Hash::make($request->input('password'));
             $user->save();
         }
-
+    
         return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
     }
+
 
     public function show(User $user)
     {
@@ -64,4 +63,5 @@ class ProfileController extends Controller
         return view('profile.show', ['user' => $user, 'profile' => $profile]);
     }
 }
+
 

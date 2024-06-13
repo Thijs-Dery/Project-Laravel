@@ -12,5 +12,8 @@
         <p><strong>About Me:</strong></p>
         <p>{{ $profile->bio ?? 'No biography provided' }}</p>
     </div>
+    <div>
+        <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profile</a>
+    </div>
 </div>
 @endsection
