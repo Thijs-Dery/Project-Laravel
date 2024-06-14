@@ -6,6 +6,7 @@ use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ContactFormController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 
 Route::redirect('/', '/dashboard');
 
@@ -40,16 +41,19 @@ Route::get('/test-db', function () {
     }
 });
 
+// Ensure only one definition per route and no duplicate or conflicting definitions
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Ensure your NewsController routes are correctly defined
 Route::resource('news', NewsController::class);
 
-Route::resource('contact-forms', ContactFormController::class)->only(['create', 'store']);
-
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::resource('news', NewsController::class)->except(['index', 'show']);
     Route::get('/admin/contact-forms', [ContactFormController::class, 'index'])->name('contact.index');
+    Route::resource('news', NewsController::class)->except(['index', 'show']);
 });
 
-Route::resource('news', NewsController::class)->only(['index', 'show']);
+// Correct FAQ routes
 Route::resource('faq-categories', FaqCategoryController::class);
 Route::resource('faqs', FaqController::class);
 Route::get('faq/create', [FaqController::class, 'create'])->name('faqs.create');
