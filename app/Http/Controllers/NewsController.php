@@ -7,11 +7,6 @@ use App\Models\News;
 
 class NewsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
         $news = News::all();
@@ -25,44 +20,28 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+        \Log::info('Store method called');
+        
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'published_at' => 'required|date',
         ]);
 
-        News::create($request->all());
+        $validatedData['user_id'] = \Auth::id();
 
-        return redirect()->route('news.index')->with('success', 'News created successfully.');
-    }
+        \Log::info('Validated Data:', $validatedData);
 
-    public function show(News $news)
-    {
-        return view('news.show', compact('news'));
-    }
-
-    public function edit(News $news)
-    {
-        return view('news.edit', compact('news'));
-    }
-
-    public function update(Request $request, News $news)
-    {
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'published_at' => 'required|date',
-        ]);
-
-        $news->update($request->all());
-
-        return redirect()->route('news.index')->with('success', 'News updated successfully.');
-    }
-
-    public function destroy(News $news)
-    {
-        $news->delete();
-
-        return redirect()->route('news.index')->with('success', 'News deleted successfully.');
+        try {
+            $news = News::create($validatedData);
+            \Log::info('News Created:', $news->toArray());
+            return redirect()->route('news.index')->with('success', 'News created successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error creating news:', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to create news.');
+        }
     }
 }
+
+
+
